@@ -2,7 +2,7 @@ const {gql} = require('apollo-server');
 
 module.exports = gql`
   type Game {
-    id: ID!
+    
     title: String!
     platform: [String!]!
     
