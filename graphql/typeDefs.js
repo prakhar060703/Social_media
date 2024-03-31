@@ -1,29 +1,24 @@
-const {gql} = require('apollo-server');
+const { gql } = require('apollo-server');
 
 module.exports = gql`
-  type Game {
-    
-    title: String!
-    platform: [String!]!
-    
-  }
   
+
+  type Story {
+    id: ID!
+    title: String!
+    content: String!
+    createdAt: String!
+    updatedAt: String!
+  }
+
   type Query {
-    games: [Game]
-    game(id: ID!): Game
-    
+    stories: [Story!]!
+    story(id: ID!):Story
   }
+
   type Mutation {
-    addGame(game: AddGameInput!): Game
-    deleteGame(id: ID!): [Game]
-    updateGame(id: ID!, edits: EditGameInput): Game
+    createStory(title: String!, content: String!): Story!
+    updateStory(id: ID!, title: String, content: String): Story!
+    deleteStory(id: ID!): Boolean!
   }
-  input AddGameInput {
-    title: String!,
-    platform: [String!]!
-  }
-  input EditGameInput {
-    title: String,
-    platform: [String!]
-  }
-`
+`;
