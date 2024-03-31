@@ -1,56 +1,70 @@
-const Games = require("../models/Games");
 
+const Story = require("../models/Story");
 
 module.exports = {
   Query: {
-    async games() {
+    stories: async () => {
       try {
-        // Fetch all games from the database
-        const games = await Games.find();
-        // Map the MongoDB _id to the id expected by GraphQL
-        return games.map((game) => ({
-          id: game._id.toString(), // Convert MongoDB _id to string
-          title: game.title,
-          platform: game.platform,
-          // Add other fields if necessary
-        }));
+        return await Story.find();
       } catch (error) {
-        throw new Error("Failed to fetch games");
+        throw new Error("Failed to fetch stories: " + error.message);
       }
     },
-    async game(_, args) {
+    story: async (_, { id }) => {
       try {
-        const game = await Games.findOne({ _id: args.id }); // Find a single game by ID
-        if (!game) {
-          throw new Error("Game not found");
+        const story = await Story.findById(id);
+        if (!story) {
+          throw new Error("Story not found");
         }
-        return {
-          id: game._id.toString(), // Convert MongoDB _id to string
-          title: game.title,
-          platform: game.platform,
-          // Add other fields if necessary
-        };
+        return story;
       } catch (error) {
-        throw new Error("Failed to fetch the game");
+        throw new Error("Failed to fetch story: " + error.message);
       }
     },
+
+
   },
-
   Mutation: {
-    async addGame(_, { game }) {
-      const { title, platform } = game; // Destructure 'game' object here
-      const addedGame = new Games({
-        title: title,
-        platform: platform,
-      });
-      const res = await addedGame.save();
-
-      // Return the added game object with its properties
-      return {
-        id: res.id,
-        title: res.title,
-        platform: res.platform,
-      };
+    
+    async createStory(_, { title, content }) {
+      return await Story.create({ title, content });
     },
+    updateStory: async (_, { id, title, content }) => {
+      try {
+        const story = await Story.findById(id);
+        if (!story) {
+          throw new Error("Story not found");
+        }
+
+        if (title !== undefined) {
+          story.title = title;
+        }
+
+        if (content !== undefined) {
+          story.content = content;
+        }
+
+        story.updatedAt = new Date(); // Update updatedAt field
+        await story.save();
+
+        return story;
+      } catch (error) {
+        throw new Error("Failed to update story: " + error.message);
+      }
+    },
+
+    deleteStory: async (_, { id }) => {
+      try {
+        const deletedStory = await Story.findByIdAndDelete(id);
+        if (!deletedStory) {
+          throw new Error("Story not found");
+        }
+        return true; // Return true if story is deleted successfully
+      } catch (error) {
+        throw new Error("Failed to delete story: " + error.message);
+      }
+    },
+
+
   },
 };
