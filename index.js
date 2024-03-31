@@ -1,4 +1,5 @@
-const {ApolloServer} = require('apollo-server');
+const express = require("express");
+const { ApolloServer, gql } = require("apollo-server-express");
 const mongoose = require('mongoose');
 const MONGODB = "mongodb+srv://prakhar060708:prakhar060708@cluster0.68zgj5d.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
 
