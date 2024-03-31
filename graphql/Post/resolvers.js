@@ -1,22 +1,22 @@
 
-const Story = require("../models/Story");
+const Post = require("../../models/Post");
 
 module.exports = {
   Query: {
-    stories: async () => {
+    postes: async () => {
       try {
-        return await Story.find();
+        return await Post.find();
       } catch (error) {
         throw new Error("Failed to fetch stories: " + error.message);
       }
     },
-    story: async (_, { id }) => {
+    post: async (_, { id }) => {
       try {
-        const story = await Story.findById(id);
-        if (!story) {
+        const post = await Post.findById(id);
+        if (!post) {
           throw new Error("Story not found");
         }
-        return story;
+        return post;
       } catch (error) {
         throw new Error("Failed to fetch story: " + error.message);
       }
@@ -26,37 +26,37 @@ module.exports = {
   },
   Mutation: {
     
-    async createStory(_, { title, content }) {
-      return await Story.create({ title, content });
+    async createPost(_, { title, content }) {
+      return await Post.create({ title, content });
     },
-    updateStory: async (_, { id, title, content }) => {
+    updatePost: async (_, { id, title, content }) => {
       try {
-        const story = await Story.findById(id);
-        if (!story) {
-          throw new Error("Story not found");
+        const post = await Post.findById(id);
+        if (!post) {
+          throw new Error("Post not found");
         }
 
         if (title !== undefined) {
-          story.title = title;
+          post.title = title;
         }
 
         if (content !== undefined) {
-          story.content = content;
+          post.content = content;
         }
 
-        story.updatedAt = new Date(); // Update updatedAt field
-        await story.save();
+        post.updatedAt = new Date(); // Update updatedAt field
+        await post.save();
 
-        return story;
+        return post;
       } catch (error) {
         throw new Error("Failed to update story: " + error.message);
       }
     },
 
-    deleteStory: async (_, { id }) => {
+    deletePost: async (_, { id }) => {
       try {
-        const deletedStory = await Story.findByIdAndDelete(id);
-        if (!deletedStory) {
+        const deletedPost = await Post.findByIdAndDelete(id);
+        if (!deletedPost) {
           throw new Error("Story not found");
         }
         return true; // Return true if story is deleted successfully
