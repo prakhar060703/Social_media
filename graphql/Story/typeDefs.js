@@ -15,6 +15,7 @@ module.exports = gql`
   type Query {
     stories: [Story!]!
     story(id: ID!):Story
+    getStoriesByUser(username: String!):[Story]
   }
 
   type Mutation {

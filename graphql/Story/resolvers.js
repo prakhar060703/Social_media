@@ -22,6 +22,18 @@ module.exports = {
         throw new Error("Failed to fetch story: " + error.message);
       }
     },
+    async getStoriesByUser(_, { username }, context) {
+      try {
+        // Check authentication
+        const user = checkAuth(context);
+        
+        // Fetch stories by username
+        const stories = await Story.find({ username }).sort({ createdAt: -1 });
+        return stories;
+      } catch (err) {
+        throw new Error(err);
+      }
+    }
   },
   Mutation: {
     createStory: async (_, { title, content }, context) => {
