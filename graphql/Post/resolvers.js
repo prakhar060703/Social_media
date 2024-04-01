@@ -1,70 +1,61 @@
-
+const { AuthenticationError } = require('apollo-server');
 const Post = require("../../models/Post");
+const checkAuth = require('../../utils/check-auth')
 
 module.exports = {
   Query: {
-    postes: async () => {
+    async getPosts() {
       try {
-        return await Post.find();
-      } catch (error) {
-        throw new Error("Failed to fetch stories: " + error.message);
+        const posts = await Post.find().sort({ createdAt: -1 });
+        return posts;
+      } catch (err) {
+        throw new Error(err);
       }
     },
-    post: async (_, { id }) => {
+    async getPost(_, { postId }) {
       try {
-        const post = await Post.findById(id);
-        if (!post) {
-          throw new Error("Story not found");
+        const post = await Post.findById(postId);
+        if (post) {
+          return post;
+        } else {
+          throw new Error('Post not found');
         }
-        return post;
-      } catch (error) {
-        throw new Error("Failed to fetch story: " + error.message);
+      } catch (err) {
+        throw new Error(err);
       }
-    },
-
-
+    }
   },
   Mutation: {
-    
-    async createPost(_, { title, content }) {
-      return await Post.create({ title, content });
+    async createPost(_, { body }, context) {
+      console.log(context);
+      const user = checkAuth(context);
+      console.log(user);
+
+      const newPost = new Post({
+        body,
+        user: user.id,
+        username: user.username,
+        createdAt: new Date().toISOString()
+      });
+
+      const post = await newPost.save();
+
+      return post;
     },
-    updatePost: async (_, { id, title, content }) => {
+    async deletePost(_, { postId }, context) {
+      const user = checkAuth(context);
+
       try {
-        const post = await Post.findById(id);
-        if (!post) {
-          throw new Error("Post not found");
+        const post = await Post.findById(postId);
+        if (user.username === post.username) {
+          await post.delete();
+          return 'Post deleted successfully';
+        } else {
+          throw new AuthenticationError('Action not allowed');
         }
-
-        if (title !== undefined) {
-          post.title = title;
-        }
-
-        if (content !== undefined) {
-          post.content = content;
-        }
-
-        post.updatedAt = new Date(); // Update updatedAt field
-        await post.save();
-
-        return post;
-      } catch (error) {
-        throw new Error("Failed to update story: " + error.message);
+      } catch (err) {
+        throw new Error(err);
       }
-    },
-
-    deletePost: async (_, { id }) => {
-      try {
-        const deletedPost = await Post.findByIdAndDelete(id);
-        if (!deletedPost) {
-          throw new Error("Story not found");
-        }
-        return true; // Return true if story is deleted successfully
-      } catch (error) {
-        throw new Error("Failed to delete story: " + error.message);
-      }
-    },
-
-
-  },
+    }
+  }
 };

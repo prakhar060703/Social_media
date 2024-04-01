@@ -5,20 +5,18 @@ module.exports = gql`
 
   type Post {
     id: ID!
-    title: String!
-    content: String!
+    body: String!
     createdAt: String!
-    updatedAt: String!
+    username: String!
   }
 
   type Query {
-    postes: [Post!]!
-    post(id: ID!):Post
+    getPosts: [Post]
+    getPost(postId: ID!): Post
   }
 
   type Mutation {
-    createPost(title: String!, content: String!): Post!
-    updatePost(id: ID!, title: String, content: String): Post!
-    deletePost(id: ID!): Boolean!
+    createPost(body: String!): Post!
+    deletePost(postId: ID!): String!
   }
 `;

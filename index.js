@@ -17,18 +17,21 @@ async function startServer() {
   const storyServer = new ApolloServer({
     typeDefs: [StoryTypeDefs],
     resolvers: [StoryResolvers],
+    context: ({ req }) => ({ req }),
     playground: true, // Enable GraphQL Playground
   });
 
   const postServer = new ApolloServer({
     typeDefs: [PostTypeDefs],
     resolvers: [PostResolvers],
+    context: ({ req }) => ({ req }),
     playground: true, // Enable GraphQL Playground
   });
 
   const authServer = new ApolloServer({
     typeDefs: [AuthTypeDefs],
     resolvers: [AuthResolvers],
+    context: ({ req }) => ({ req }),
     playground: true, // Enable GraphQL Playground
   });
 
@@ -44,8 +47,8 @@ async function startServer() {
   mongoose.connect(MONGODB, { useNewUrlParser: true });
   console.log("MongoDB is connected");
 
-  app.listen({ port: 5000 }, () => {
-    console.log(`Server running at http://localhost:5000`);
+  app.listen({ port: 4000 }, () => {
+    console.log(`Server running at http://localhost:4000`);
   });
 }
 
