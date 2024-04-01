@@ -1,6 +1,6 @@
 const { AuthenticationError } = require('apollo-server');
 const Post = require("../../models/Post");
-const checkAuth = require('../../utils/check-auth')
+const checkAuth = require('../../utils/check-auth');
 
 module.exports = {
   Query: {
@@ -20,6 +20,18 @@ module.exports = {
         } else {
           throw new Error('Post not found');
         }
+      } catch (err) {
+        throw new Error(err);
+      }
+    },
+    async getPostsByUser(_, { username }, context) {
+      try {
+        // Check authentication
+        const user = checkAuth(context);
+        
+        // Fetch posts by username
+        const posts = await Post.find({ username }).sort({ createdAt: -1 });
+        return posts;
       } catch (err) {
         throw new Error(err);
       }
