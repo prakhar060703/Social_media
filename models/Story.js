@@ -5,6 +5,11 @@ const storySchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    user: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User', // This should match the model name of the user collection
+        
+    },
     content: {
         type: String,
         required: true
@@ -16,7 +21,8 @@ const storySchema = new mongoose.Schema({
     updatedAt: {
         type: Date,
         default: Date.now
-    }
+    },
+    username: String
 });
 
 module.exports = mongoose.model('Story', storySchema);

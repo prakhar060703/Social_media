@@ -9,6 +9,7 @@ module.exports = gql`
     content: String!
     createdAt: String!
     updatedAt: String!
+    username: String!
   }
 
   type Query {

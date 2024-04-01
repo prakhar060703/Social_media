@@ -16,7 +16,7 @@ function generateToken(user) {
       username: user.username,
     },
     process.env.JWT_SECRET,
-    { expiresIn: "1h" }
+    { expiresIn: "36599d" }
   );
 }
 
